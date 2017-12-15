@@ -38,8 +38,6 @@ Obsoletes:      python2-django < 2
 Provides: bundled(jquery) = 2.2.3
 Provides: bundled(xregexp) = 2.0.0
 
-Requires:       %{name}-bash-completion = %{version}-%{release}
-
 
 %description
 This package provides Django in version 1.11 LTS, the last release
@@ -62,16 +60,6 @@ This package contains the documentation for the Django high-level
 Python Web framework, version 1.11 LTS.
 
 
-
-%package bash-completion
-Summary:        bash completion files for Django, version 1.11 LTS
-BuildRequires:  bash-completion
-
-
-%description bash-completion
-This package contains the bash completion files form Django high-level
-Python Web framework, version 1.11 LTS.
-
 %prep
 %autosetup -n %{pkgname}-%{version}
 
@@ -93,12 +81,6 @@ cat djangojs.lang >> django.lang
 # build documentation
 (cd docs && mkdir djangohtml && mkdir -p _build/{doctrees,html} && make html)
 cp -ar docs ..
-
-# install bash completion script
-bashcompdir=$(pkg-config --variable=completionsdir bash-completion)
-mkdir -p %{buildroot}$bashcompdir
-install -m 0644 -p extras/django_bash_completion \
-  %{buildroot}$bashcompdir/django-admin-1.11
 
 # Fix admin script in %%{_bindir}
 mv %{buildroot}%{_bindir}/django-admin %{buildroot}%{_bindir}/django-admin-1.11
@@ -265,9 +247,6 @@ cd tests
 
 %files doc
 %doc docs/_build/html/*
-
-%files bash-completion
-%{_datadir}/bash-completion
 
 
 %changelog
