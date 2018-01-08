@@ -3,8 +3,8 @@
 
 Name:           python2-django1.11
 
-Version:        1.11.5
-Release:        2%{?dist}
+Version:        1.11.9
+Release:        1%{?dist}
 Summary:        Version 1.11 LTS of Django, a high-level Python Web framework
 
 Group:          Development/Languages
@@ -250,6 +250,6 @@ cd tests
 
 
 %changelog
-* Wed Dec 13 2017 Petr Viktorin <pviktori@redhat.com> - 1.11.5-2
+* Wed Dec 13 2017 Petr Viktorin <pviktori@redhat.com> - 1.11.9-1
 - Initial compat package
-- Based on Fedora's python-django 1.11.5-1
+- Based on Fedora's python-django 1.11.5-1; updated to 1.11.9
