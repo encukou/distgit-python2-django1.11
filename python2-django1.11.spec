@@ -29,9 +29,9 @@ BuildRequires:  python2-pyyaml
 BuildRequires:  python2-pytz
 BuildRequires:  python2-selenium
 BuildRequires:  python2-sqlparse
-BuildRequires:  python-memcached
-Requires:       python2-pytz
+BuildRequires:  python2-memcached
 
+Requires:       python2-pytz
 Obsoletes:      python-django < 2
 Obsoletes:      python2-django < 2
 
@@ -53,7 +53,7 @@ principle.
 Summary:        Documentation for Django, version 1.11 LTS
 Requires:       %{name} = %{version}-%{release}
 
-BuildRequires:  python-sphinx
+BuildRequires:  python2-sphinx
 
 %description doc
 This package contains the documentation for the Django high-level
@@ -80,7 +80,6 @@ cat djangojs.lang >> django.lang
 
 # build documentation
 (cd docs && mkdir djangohtml && mkdir -p _build/{doctrees,html} && make html)
-cp -ar docs ..
 
 # Fix admin script in %%{_bindir}
 mv %{buildroot}%{_bindir}/django-admin %{buildroot}%{_bindir}/django-admin-1.11
@@ -89,14 +88,14 @@ rm %{buildroot}%{_bindir}/django-admin.py
 # play well with man
 
 # remove .po files
-find $RPM_BUILD_ROOT -name "*.po" | xargs rm -f
+find %{buildroot} -name "*.po" | xargs rm -f
 
 
 %check
 export PYTHONPATH=$(pwd)
 export LANG=en_US.utf8
 cd tests
-%{__python} ./runtests.py --settings=test_sqlite --verbosity=2 --parallel 1
+%{__python2} ./runtests.py --settings=test_sqlite --verbosity=2 --parallel 1
 
 
 %files -f django.lang
