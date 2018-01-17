@@ -18,6 +18,7 @@ BuildArch:      noarch
 
 BuildRequires:  python2-devel
 BuildRequires:  python2-bcrypt
+BuildRequires:  %{_bindir}/pathfix.py
 
 # test requirements
 BuildRequires:  python2-docutils
@@ -63,6 +64,8 @@ Python Web framework, version 1.11 LTS.
 %prep
 %autosetup -n %{pkgname}-%{version}
 
+# Remove stray executable bit
+chmod -v -x django/contrib/admin/static/admin/js/vendor/xregexp/xregexp.js
 
 
 %build
@@ -84,11 +87,18 @@ cat djangojs.lang >> django.lang
 # Fix admin script in %%{_bindir}
 mv %{buildroot}%{_bindir}/django-admin %{buildroot}%{_bindir}/django-admin-1.11
 rm %{buildroot}%{_bindir}/django-admin.py
+
 # Man page for django-admin-1.11 is not packaged -- the dot & number don't
 # play well with man
 
 # remove .po files
 find %{buildroot} -name "*.po" | xargs rm -f
+
+# Fix shebang in internal script
+pathfix.py -i %{__python2} -p %{buildroot}%{python2_sitelib}/django/bin/*
+
+# Remove stray backup file
+rm -f %{buildroot}%{python2_sitelib}/django/bin/*~
 
 
 %check
@@ -102,147 +112,17 @@ cd tests
 %doc AUTHORS README.rst
 %license LICENSE
 %{_bindir}/django-admin-1.11
-%attr(0755,root,root) %{python2_sitelib}/django/bin/django-admin.py*
-# Include everything but the locale data ...
-%dir %{python2_sitelib}/django
-%dir %{python2_sitelib}/django/bin
-%{python2_sitelib}/django/apps
-%{python2_sitelib}/django/db/
-%{python2_sitelib}/django/*.py*
-%{python2_sitelib}/django/utils/
-%{python2_sitelib}/django/dispatch/
-%{python2_sitelib}/django/template/
-%{python2_sitelib}/django/views/
-%{python2_sitelib}/django/urls/
-%dir %{python2_sitelib}/django/conf/
-%dir %{python2_sitelib}/django/conf/locale/
-%dir %{python2_sitelib}/django/conf/locale/??/
-%dir %{python2_sitelib}/django/conf/locale/??_*/
-%dir %{python2_sitelib}/django/conf/locale/*/LC_MESSAGES
-%dir %{python2_sitelib}/django/contrib/
-%{python2_sitelib}/django/contrib/*.py*
-%dir %{python2_sitelib}/django/contrib/admin/
-%dir %{python2_sitelib}/django/contrib/admin/locale
-%dir %{python2_sitelib}/django/contrib/admin/locale/??/
-%dir %{python2_sitelib}/django/contrib/admin/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/admin/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/admin/*.py*
-%{python2_sitelib}/django/contrib/admin/migrations
-%{python2_sitelib}/django/contrib/admin/views/
-%{python2_sitelib}/django/contrib/admin/static/
-%{python2_sitelib}/django/contrib/admin/templatetags/
-%{python2_sitelib}/django/contrib/admin/templates/
-%dir %{python2_sitelib}/django/contrib/admindocs/
-%dir %{python2_sitelib}/django/contrib/admindocs/locale/
-%dir %{python2_sitelib}/django/contrib/admindocs/locale/??/
-%dir %{python2_sitelib}/django/contrib/admindocs/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/admindocs/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/admindocs/*.py*
-%{python2_sitelib}/django/contrib/admindocs/templates/
-%dir %{python2_sitelib}/django/contrib/auth/
-%dir %{python2_sitelib}/django/contrib/auth/locale/
-%dir %{python2_sitelib}/django/contrib/auth/locale/??/
-%dir %{python2_sitelib}/django/contrib/auth/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/auth/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/auth/*.py*
-%{python2_sitelib}/django/contrib/auth/common-passwords.txt.gz
-%{python2_sitelib}/django/contrib/auth/handlers/
-%{python2_sitelib}/django/contrib/auth/management/
-%{python2_sitelib}/django/contrib/auth/migrations/
-%{python2_sitelib}/django/contrib/auth/templates/
-%{python2_sitelib}/django/contrib/auth/tests/
-%dir %{python2_sitelib}/django/contrib/contenttypes/
-%dir %{python2_sitelib}/django/contrib/contenttypes/locale
-%dir %{python2_sitelib}/django/contrib/contenttypes/locale/??/
-%dir %{python2_sitelib}/django/contrib/contenttypes/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/contenttypes/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/contenttypes/management
-%{python2_sitelib}/django/contrib/contenttypes/migrations
-%{python2_sitelib}/django/contrib/contenttypes/*.py*
-%dir %{python2_sitelib}/django/contrib/flatpages/
-%dir %{python2_sitelib}/django/contrib/flatpages/locale/
-%dir %{python2_sitelib}/django/contrib/flatpages/locale/??/
-%dir %{python2_sitelib}/django/contrib/flatpages/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/flatpages/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/flatpages/*.py*
-%{python2_sitelib}/django/contrib/flatpages/migrations/
-%{python2_sitelib}/django/contrib/flatpages/templatetags
-%dir %{python2_sitelib}/django/contrib/gis/
-%dir %{python2_sitelib}/django/contrib/gis/locale/
-%dir %{python2_sitelib}/django/contrib/gis/locale/??/
-%dir %{python2_sitelib}/django/contrib/gis/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/gis/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/gis/*.py*
-%{python2_sitelib}/django/contrib/gis/geoip/
-%{python2_sitelib}/django/contrib/gis/geoip2/
-%{python2_sitelib}/django/contrib/gis/serializers/
-%{python2_sitelib}/django/contrib/gis/static
-%dir %{python2_sitelib}/django/contrib/humanize/
-%dir %{python2_sitelib}/django/contrib/humanize/locale/
-%dir %{python2_sitelib}/django/contrib/humanize/locale/??/
-%dir %{python2_sitelib}/django/contrib/humanize/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/humanize/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/humanize/templatetags/
-%{python2_sitelib}/django/contrib/humanize/*.py*
-%{python2_sitelib}/django/contrib/messages/*.py*
-%dir %{python2_sitelib}/django/contrib/postgres/
-%{python2_sitelib}/django/contrib/postgres/*.py*
-%{python2_sitelib}/django/contrib/postgres/aggregates
-%{python2_sitelib}/django/contrib/postgres/jinja2
-%{python2_sitelib}/django/contrib/postgres/fields
-%{python2_sitelib}/django/contrib/postgres/forms
-%{python2_sitelib}/django/contrib/postgres/templates
-%dir %{python2_sitelib}/django/contrib/redirects
-%dir %{python2_sitelib}/django/contrib/redirects/locale
-%dir %{python2_sitelib}/django/contrib/redirects/locale/??/
-%dir %{python2_sitelib}/django/contrib/redirects/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/redirects/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/redirects/*.py*
-%{python2_sitelib}/django/contrib/redirects/migrations
-%dir %{python2_sitelib}/django/contrib/sessions/
-%dir %{python2_sitelib}/django/contrib/sessions/locale/
-%dir %{python2_sitelib}/django/contrib/sessions/locale/??/
-%dir %{python2_sitelib}/django/contrib/sessions/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/sessions/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/sessions/management/
-%{python2_sitelib}/django/contrib/sessions/migrations/
-%{python2_sitelib}/django/contrib/sessions/*.py*
-%{python2_sitelib}/django/contrib/sitemaps/
-%dir %{python2_sitelib}/django/contrib/sites/
-%dir %{python2_sitelib}/django/contrib/sites/locale/
-%dir %{python2_sitelib}/django/contrib/sites/locale/??/
-%dir %{python2_sitelib}/django/contrib/sites/locale/??_*/
-%dir %{python2_sitelib}/django/contrib/sites/locale/*/LC_MESSAGES
-%{python2_sitelib}/django/contrib/sites/*.py*
-%{python2_sitelib}/django/contrib/sites/migrations
-%{python2_sitelib}/django/contrib/staticfiles/
-%{python2_sitelib}/django/contrib/syndication/
-%{python2_sitelib}/django/contrib/gis/admin/
-%{python2_sitelib}/django/contrib/gis/db/
-%{python2_sitelib}/django/contrib/gis/forms/
-%{python2_sitelib}/django/contrib/gis/gdal/
-%{python2_sitelib}/django/contrib/gis/geometry/
-%{python2_sitelib}/django/contrib/gis/geos/
-%{python2_sitelib}/django/contrib/gis/management/
-%{python2_sitelib}/django/contrib/gis/sitemaps/
-%{python2_sitelib}/django/contrib/gis/templates/
-%{python2_sitelib}/django/contrib/gis/utils/
-%{python2_sitelib}/django/contrib/messages/storage/
-%{python2_sitelib}/django/contrib/sessions/backends/
-%{python2_sitelib}/django/forms/
-%{python2_sitelib}/django/templatetags/
-%{python2_sitelib}/django/core/
-%{python2_sitelib}/django/http/
-%{python2_sitelib}/django/middleware/
-%{python2_sitelib}/django/test/
-%{python2_sitelib}/django/conf/*.py*
-%{python2_sitelib}/django/conf/project_template/
-%{python2_sitelib}/django/conf/app_template/
-%{python2_sitelib}/django/conf/urls/
-%{python2_sitelib}/django/conf/locale/*/*.py*
-%{python2_sitelib}/django/conf/locale/*.py*
+
+%{python2_sitelib}/django/
+# Note: this duplicates files in %%find_lang
+# The macro is meant to make it easy for packages to own .mo files in:
+#    %%{_datadir}/locale/??/LC_MESSAGES/*.mo
+# ... but not the LC_MESSAGES directory itself.
+# But Django's lang files are in site-packages/django, and we own all of that.
+# This does cause harmless build warnings about duplicate files.
 
 %{python2_sitelib}/*.egg-info
+
 
 %files doc
 %doc docs/_build/html/*
