@@ -39,6 +39,8 @@ Obsoletes:      python2-django < 2
 Provides: bundled(jquery) = 2.2.3
 Provides: bundled(xregexp) = 2.0.0
 
+%{?python_provide:%python_provide %{name}}
+
 
 %description
 This package provides Django in version 1.11 LTS, the last release
@@ -55,6 +57,11 @@ Summary:        Documentation for Django, version 1.11 LTS
 Requires:       %{name} = %{version}-%{release}
 
 BuildRequires:  python2-sphinx
+
+Obsoletes:      python-django-doc < 2
+Obsoletes:      python2-django-doc < 2
+
+%{?python_provide:%python_provide %{name}-doc}
 
 %description doc
 This package contains the documentation for the Django high-level
